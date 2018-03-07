@@ -1,2 +1,6 @@
 .DS_Store
 cousera/PL1/**/*.sml
+problem_solving/main.cpp
+problem_solving/CMakeLists.txt
+problem_solving/cmake-build-debug
+problem_solving/.idea/**/*
