@@ -10,6 +10,7 @@
 // (15 * 19 * s) % 28 == (285 * s) % 28 == (5 * sr) % 28 == 1
 // (15 * 28 * m) % 19 == (420 * m) % 19 == (2 * mr) % 19 == 1
 //
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -27,7 +28,4 @@ int main() {
     cout << ans % 7980 << endl;
   }
 }
-
-
-
 
