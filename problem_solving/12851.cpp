@@ -70,6 +70,4 @@ int main() {
     }
 
   }
-  cout << dis << endl;
-  cout << ans << endl;
 }
