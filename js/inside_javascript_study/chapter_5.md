@@ -57,4 +57,46 @@ ExContext2();
 - 함수 객체가 선언될때의 실행 컨텍스트가 중요하다. 스코프 정보는 함수의 선언 될때(함수의 실행 컨텍스트)를 만들 때 생성됨
 - `with`라는 명령어로 `[[scope]]`를 사용자가 임의로 수정할 수 있음.
 
- 
+클로저: 이미 생명 주기가 끝난 외부 함수의 변수를 참조하는 함수를 클로저라고 한다.
+- 클로저로 참조되는 외부 변수 즉, outerFunc의 x와 같은 변수를 자유 변수라고 한다.
+- 클로저를 사용할 경우 `[[scope]]`에서 확인할 수 있는바대로, 첫 번째 객체가 아닌 그 이후의 객체에 존재하기 때문에 성능 이슈가 일어난다.
+
+```
+function outerFunc(arg1, arg2) {
+  var local = 8;
+  function innerFunc(innerArg) {
+    console.log((arg1 + arg2) / (innerArg + local));
+  }
+  return innerFunc;
+}
+
+var exam1 = outerFunc(2, 4);
+exam(2);
+```
+
+- 루프 안에서 클로저를 활용할 때는 주의하자
+
+```
+function countSeconds(howMany) {
+  for (var i = 1; i <= howMany; i++) {
+    setTiimeout(function() {
+      console.log(i);
+    }, i * 1000);
+  }
+}
+
+-> 
+
+function countSeconds(howMany) {
+  for(var i = 1; i <= howMany; i++) {
+    (function (currentI) {
+      setTimeout(function() {
+        console.log(currentI);
+      }, currentI * 1000);
+    }(i));
+  }
+}
+```
+------ 질문
+
+- 
