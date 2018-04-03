@@ -330,8 +330,10 @@ function object(o) {
 
 #### 기생 상속
 
-일단 삭속을 담당할 함수를 만들고, 어떤 식으로든 객체를 홪아해서 반환한다는 것입니다. 
+일단 삭속을 담당할 함수를 만들고, 어떤 식으로든 객체를 확장해서 반환한다는 것입니다. 
 ```
+
+
 function createAnoter(original) {
   var clone = object(original);
   clone.sayHi = function() {
@@ -349,7 +351,57 @@ var anotherPerson = createAnother(person);
 anotherPerson.sayHi();
 ```
 
-###
+기생 상속을 이용해 객체에 함수를 추가하면 생성자 패턴과 비슷한, 함수 재사용과 관련된 비효율 문제가 생긴다.
 
-new 연산자 어케 적당하는지
-polyfill
+### 기생 조합 상속
+
+```
+function object(o) {
+  function F() {}
+  F.prototype = o;
+  return new F();
+}
+
+function SuperType(name) {
+  this.name = name;
+  this.colors = ["red", "blue", "green"];
+}
+
+SuperType.prototype.sayName = function () {
+  return this.name;
+}
+
+function SubType(name, age) [
+  SuperType.call(this, name);
+}
+
+inheritPrototype(SubType, SuperType) {
+  var prototype = object(superType.prototype); // ES5 이상부터는 Object.create()라는 함수를 사용할 수 있다.
+  prototype.constructor = subType;
+  subType.prototype = prototype;
+}
+
+inheritPrototype(SubType, SuperType);
+SubType.prototype.constructor = SubType;
+SubType.prototype.sayAge = function() {
+  return this.anem;
+}
+```
+
+new 연산자를 간단하게 작성하면 다음과 같다
+
+```
+fucntion customNew(func, ...args) {
+  var obj, ret, proto;
+  // func.prototype이 객체인지 아닌지 확인함. 객체가 아닐경우 Object.prototype 리턴
+  proto = Object(func.prototype) === func.prototype ? func.prototype: Object.prototype;
+  // 새로운 객체 생성 with proto;
+  obj = Object.create(proto);
+  // func을 실행하면서 함께 넘어온 인자를 실행
+  ret = func.apply(obj, Array.prototype.slice.call(args));
+  if(Object(ret) === ret) {
+    return ret;
+  }
+  return obj;
+}
+```
