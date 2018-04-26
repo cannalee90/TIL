@@ -95,4 +95,54 @@ function Point(x, y) {
 var p1 = new Point(1, 2);
 ```
 
-`new Point(1,2)` 코드가 수행되면, V8은 `C0`이라는 hidden class를 새롭게 만들게 된다. 이때 어떠한 속성도 없는 상태이기 때문에 `C0`은 비어있는 상태이다. `this.x = x` 
+`new Point(1,2)` 코드가 수행되면, V8은 `C0`이라는 hidden class를 새롭게 만들게 된다. 이때 어떠한 속성도 없는 상태이기 때문에 `C0`은 비어있는 상태이다. `this.x = x`이 실행되면, `C0`을 기반으로 한 V8은 두번째 hidden class인 `C1`을 만든다. `C1`에서는 x의 프로퍼티의 offset이 저장되어 있다. 이때 x의 offset은 0이 된다. V8은 `C0`을 class transition을 통해서 업데이트 한다. 이때 hidden class point object는 `C1`을 가르키게 된다. 
+
+
+Every time a new property is added to an object, the old hidden class is updated with a transition path to the new hidden class. Hidden class transitions are important because they allow hidden classes to be shared among objects that are created the same way. If two objects share a hidden class and the same property is added to both of them, transitions will ensure that both objects receive the same new hidden class and all the optimized code that comes with it.
+
+
+이 프로세는 `this.y = y`가 실행될때도 반복된다. `C2`라는 hidden class가 만들어지고 y는 x와 다른 offset을 가진다. 히든 클래스의 오브젝트는 `C2`를 가르킨다. hidden class transition은 프로퍼티가 오브젝트에 추가되는 순서에 영향을 받기 때문에 다이나믹하게 오브젝트를 생성할 경우 이러한 순서를 일정하게 하는 것이 최적화에 도움이 된다.
+
+```js
+function Point(x, y) {
+    this.x = x;
+    this.y = y;
+}
+var p1 = new Point(1, 2);
+p1.a = 5;
+p1.b = 6;
+var p2 = new Point(3, 4);
+p2.b = 7;
+p2.a = 8;
+```
+
+p1과 p2는 다른 transition path를 가지게 된다.
+
+### Inline caching
+
+V8이 사용하는 최적화 방식. 같은 타입의 오브젝트가 반복되서 호출되는 것을 관찰하는 것에서부터 시작된다. 더 알아보고 싶다면 [여기](https://github.com/sq/JSIL/wiki/Optimizing-dynamic-JavaScript-with-inline-caches)를 참조하자. 이 포스트에서는 전반적인 컨셉만 설명하도록 하겠다.
+
+
+###
+
+###
+
+
+###
+
+
+### How to write optimized JavaScript
+
+1. **Order of object properties**
+    - hidden class를 공유될 수 있도록 작성해야한다.
+2. **Dynamic properties**
+    - 동적으로 속성을 추가하게 되면 hidden class transition을 강제하기 때문에, 최대한 생성자에서 모든 속성을 추가하는 것이 좋다.
+3. **Methods**
+    - 인라인 캐싱이 적용되기 때문에 같은 오브젝트에서 반복적으로 실행되는 메쏘드는 좀 더 빠르다.
+
+4. **Array** **Object**
+    - 키값이 sparese하게 증가되는 어레이는 사용하지 않는게 좋다. 이러한 배열은 해쉬테이블과 다를게 없고 그러한 배열의 접근하는 연산은 비싸다
+    - 큰 배열을 미리 allocation 하는 것을 피한다
+4. **Tagged values** 
+    - V8은 오브젝트와 number를 32비트로 나타낸다.
+    - V8은 1비트를 SMI인지 아닌지를 확인하기 위한 flag로 사용한다. 만약 SMI가 아닐경우 V8은 해당 넘버를 box화해서 해당 number를 double로 만들거나 new object를 만들어서 넣게 된다. 따라서 31 signed 넘버를 최대한 사용하는 것이 좋다
