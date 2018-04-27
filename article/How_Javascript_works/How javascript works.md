@@ -123,12 +123,26 @@ p1과 p2는 다른 transition path를 가지게 된다.
 V8이 사용하는 최적화 방식. 같은 타입의 오브젝트가 반복되서 호출되는 것을 관찰하는 것에서부터 시작된다. 더 알아보고 싶다면 [여기](https://github.com/sq/JSIL/wiki/Optimizing-dynamic-JavaScript-with-inline-caches)를 참조하자. 이 포스트에서는 전반적인 컨셉만 설명하도록 하겠다.
 
 
-###
+### Compilation to machine code
 
-###
+`Hydrogen graph`가 최적화 된다면, `Crankshaft`는 이 것을 `Lithium`이라 불리는 로우레벨 표현으로 나타낸다. 대부분의 `Lithium` 구현은 architecture-specific이다. Register allocation은 대부분 이 레벨에서 일어난다. 
 
+마지막으로 `Lithium`은 머신코드로 컴파일 된다. 그리고 OSR이라 불리는 일이 발생한다. 오래 실행되는 메소드를 컴파일하고 최적화하기 전에, 우리가 그 메소드를 실행할 수도 있다. V8 is not going to forget what it just slowly executed to start again with the optimized version. 대신 V8은 우리가 가지고 있는 모든 컨텍스트(stack registers)를 transfrom해서 우리가 optimized 된 버젼으로 실행 도중 변환 할 수 있게 해준다. This is a very complex task, having in mind that among other optimizations, V8 has inlined the code initially. V8 is not the only engine capable of doing it.
 
-###
+deoptimization이라고 불리는 안전망이 있다. transformation의 반대로써 엔진이 만드는 가정이 더이상 옳지 않다고 판단되면  none-optimized 코드로 다시 돌아갈 수 있는 기능이다.
+There are safeguards called deoptimization to make the opposite transformation and reverts back to the non-optimized code in case an assumption the engine made doesn’t hold true anymore.
+
+### Garbage collection
+
+V8은 전통적인 `mark-and-swap` 방식을 사용한다. 마킹 페이즈에서는 자바스크립트 실행을 멈추게 된다. GC 비용을 조절하고, 좀 더 나은 실행환경을 만들기 위해서 V8은 `incremental marking`을 사용한다. 전체 힙을 순회(`heap walk`)하는것이 아니라, 일부 가능한 오브젝트를 표시하고 다시 스크립트를 실행한다. 다음 GC는 저번(`heap walk`)가 끝난 부분에서 다시 수행된다. 이 방법을 사용하면 실행도중 `pause`되는 시간을 줄일 수 있다. `sweep phase`는 또 다른 쓰레드에서 수행된다.
+
+### Ignition and TurboFan
+
+V8이 2017년도에 새롭게 도입한 실행 파이프라인이 메모리 절약과 퍼포먼스에 엄청나게 향상시켰다. 이 실행 파이프라인은 V8 인터프리터(`Ignition`)과 V8 컴파일러(`TurboFan`)에 의거해서 만들어졌다.
+
+https://v8project.blogspot.kr/2017/05/launching-ignition-and-turbofan.html
+
+5.9 version의 V8부터 `full-codegen`과 `Crankshaft`는 자바스크립트 실행에 더이상 사용되지 않는다. 
 
 
 ### How to write optimized JavaScript
