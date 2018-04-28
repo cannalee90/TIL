@@ -122,6 +122,11 @@ p1과 p2는 다른 transition path를 가지게 된다.
 
 V8이 사용하는 최적화 방식. 같은 타입의 오브젝트가 반복되서 호출되는 것을 관찰하는 것에서부터 시작된다. 더 알아보고 싶다면 [여기](https://github.com/sq/JSIL/wiki/Optimizing-dynamic-JavaScript-with-inline-caches)를 참조하자. 이 포스트에서는 전반적인 컨셉만 설명하도록 하겠다.
 
+V8은 최근의 메쏘드 호출에 파라미터로 넘어온 오브젝트의 정보를 캐슁하고 이 정보를 미래에 넘어올 오브젝트의 타입과 같을거라고 가정한다. 만약 V8이 좋은 가정을 만들었다면 넘어온 오브젝트의 속성값을 검사하는 것을 무시하고 예전 정보를 사용한다.
+
+hideen classes와 inline caching이 연결되어 있다. 오브젝트가 메소드에서 호출되면, V8은 오브젝트의 특정 속성에 접근하기 위해서 hidden class를 참조해서 offset을 계산한다. 같은 메소드에서 동일한 오브젝트를 두번 호출하는것이 성공하면, V8은 hidden class를 찾아보는 것을 생략하고 object pointer가 가르키는 속성의 오프셋을 더한다. 모든 미래의 호출에 대해서 V8 엔진은 hidden class가 바뀌지 않는다는 것을 가정한다. 그리고 지난번 호출에 사용해서 저장되어 있는 offset을 사용해 memory address에 바로 접근한다. 
+
+같은 타입은 오브젝트는 hidden class를 공유한다는 점이 inline caching에서 매우 중요하다. 만약 hidden class를 다르게 똑같은 오브젝트를 생성한다면, V8은 inline caching을 할 수 없다. 
 
 ### Compilation to machine code
 
