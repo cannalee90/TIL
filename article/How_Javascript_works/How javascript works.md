@@ -165,3 +165,30 @@ https://v8project.blogspot.kr/2017/05/launching-ignition-and-turbofan.html
 4. **Tagged values** 
     - V8은 오브젝트와 number를 32비트로 나타낸다.
     - V8은 1비트를 SMI인지 아닌지를 확인하기 위한 flag로 사용한다. 만약 SMI가 아닐경우 V8은 해당 넘버를 box화해서 해당 number를 double로 만들거나 new object를 만들어서 넣게 된다. 따라서 31 signed 넘버를 최대한 사용하는 것이 좋다
+
+
+### [How JavaScript works: memory management + how to handle 4 common memory leaks](How JavaScript works: memory management + how to handle 4 common memory leaks)
+
+
+#### Overview
+
+C와 같은 로우레벨 언어는 원시적인 메모리 관리 방법이 있다. 이러한 방법은 개발자에 의해 사용되고 명시적으로 OS에게 할당하고 반환된다.
+
+자바스크립트는 자동적으로 특정 것들이 만들어질때 **자동적으로** 할당되고, 그들이 사용되지 않을때 가비지 컬렉션의 의해서 자동적으로 반환된다. 겉보기엔 자동적으로 보이는 이러한 리소스 반환은 혼돈의 근원일뿐만 안리ㅏ 자바스크립트 개발자가 메모리 매니지먼트를 할 수 없다는 인상을 주게 되는 원인이다.
+
+고레벨 언어를 다룰때에도, 개발자들은 메모리 관리를 반드시 이해가고 있어야 한다. 때때로 메모리 관리에 버그가 있을때 개발자가 잘 대처하기 위해서 잘 알고 있어야한다.
+
+#### Memory life cycle
+
+어떠한 언어를 사용하건 메모리 싸이클은 비슷하다
+
+![](memory_cycle.png)
+No matter what programming language you’re using, memory life cycle is pretty much always the same:
+
+
+Here is an overview of what happens at each step of the cycle:
+
+Allocate memory — memory is allocated by the operating system which allows your program to use it. In low-level languages (e.g. C) this is an explicit operation that you as a developer should handle. In high-level languages, however, this is taken care of for you.
+Use memory — this is the time when your program actually makes use of the previously allocated memory. Read and write operations are taking place as you’re using the allocated variables in your code.
+Release memory — now is the time to release the entire memory that you don’t need so that it can become free and available again. As with the Allocate memory operation, this one is explicit in low-level languages.
+For a quick overview of the concepts of the call stack and the memory heap, you can read our first post on the topic.
