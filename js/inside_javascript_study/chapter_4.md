@@ -269,3 +269,4 @@ s_prim === s_obj
 - 기본타입에 있는 메쏘드가 호출되거나 속성값을 보려고 할때 자바스크립트가 자동적으로 기본타입을 wrap 메쏘드를 호출하거나 속성값을 보도록 한다. (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String#Distinction_between_string_primitives_and_String_objects
 )
 - 사용자가 정의한 표준 메서드 역시 동일하게 적용된다.
+- http://poiemaweb.com/js-execution-context 정리하기
