@@ -183,12 +183,44 @@ C와 같은 로우레벨 언어는 원시적인 메모리 관리 방법이 있�
 어떠한 언어를 사용하건 메모리 싸이클은 비슷하다
 
 ![](memory_cycle.png)
-No matter what programming language you’re using, memory life cycle is pretty much always the same:
+
+- **Allocate memory**: OS가 프로그램이 사용할 수 있도록 메모리를 할당하는 것. 저레벨 언어에서는 명시적으로 개발자가 다뤄야 한다. 고레벨 언어에서는 명시적으로 다룰 수 없다.
+
+- **Use Memory**: 프로그램이 실제로 할당받은 메모리를 사용하는 시간. 읽기 및 쓰기 연산은 코드에서 할당된 변수를 사용할때 이루어집니다. 
+
+- **Release memory**: 사용하지 않는 메모리를 반환해서 다음에 다시 그곳을 사용할 수 있게 해주는 시간이다. 메모리 할당 연산과 마찬가지로 저레벨 언어에서는 명시적으로 사용가능하다.
+
+#### What is memory?
+
+자바스크립트에서의 메모리로 넘어가기 전에, 대략 메모리에 대해서 이야기해보자
+
+하드웨어 레벨에서 메모리는 많은 수의 flip flops로 이루어져 있다. 각각의 필립플랍은 몇개의 트렌지스터를 가지고 있고 1개의 비트를 저장할 수 있다. 각각의 플립플랍은 고유식별자로 지정될 수 있으며, 우리가 거기에 읽고 쓸 수 있다. 따라서 컨셉상으로는 우리의 메모리는 커다란 bits의 배열들로 이해할 수 있다.
 
 
-Here is an overview of what happens at each step of the cycle:
 
-Allocate memory — memory is allocated by the operating system which allows your program to use it. In low-level languages (e.g. C) this is an explicit operation that you as a developer should handle. In high-level languages, however, this is taken care of for you.
-Use memory — this is the time when your program actually makes use of the previously allocated memory. Read and write operations are taking place as you’re using the allocated variables in your code.
-Release memory — now is the time to release the entire memory that you don’t need so that it can become free and available again. As with the Allocate memory operation, this one is explicit in low-level languages.
-For a quick overview of the concepts of the call stack and the memory heap, you can read our first post on the topic.
+Since as humans, we are not that good at doing all of our thinking and arithmetic in bits, we organize them into larger groups, which together can be used to represent numbers. 8 bits are called 1 byte. Beyond bytes, there are words (which are sometimes 16, sometimes 32 bits).
+
+A lot of things are stored in this memory:
+
+All variables and other data used by all programs.
+The programs’ code, including the operating system’s.
+The compiler and the operating system work together to take care of most of the memory management for you, but we recommend that you take a look at what’s going on under the hood.
+
+When you compile your code, the compiler can examine primitive data types and calculate ahead of time how much memory they will need. The required amount is then allocated to the program in the call stack space. The space in which these variables are allocated is called the stack space because as functions get called, their memory gets added on top of the existing memory. As they terminate, they are removed in a LIFO (last-in, first-out) order. For example, consider the following declarations:
+
+int n; // 4 bytes
+int x[4]; // array of 4 elements, each 4 bytes
+double m; // 8 bytes
+The compiler can immediately see that the code requires 
+4 + 4 × 4 + 8 = 28 bytes.
+
+That’s how it works with the current sizes for integers and doubles. About 20 years ago, integers were typically 2 bytes, and double 4 bytes. Your code should never have to depend on what is at this moment the size of the basic data types.
+The compiler will insert code that will interact with the operating system to request the necessary number of bytes on the stack for your variables to be stored.
+
+In the example above, the compiler knows the exact memory address of each variable. In fact, whenever we write to the variable n, this gets translated into something like “memory address 4127963” internally.
+
+Notice that if we attempted to access x[4] here, we would have accessed the data associated with m . That’s because we’re accessing an element in the array that doesn’t exist — it’s 4 bytes further than the last actual allocated element in the array which is x[3], and may end up reading (or overwriting) some of m’s bits. This would almost certainly have very undesired consequences for the rest of the program.
+
+
+When functions call other functions, each gets its own chunk of the stack when it is called. It keeps all its local variables there, but also a program counter that remembers where in its execution it was. When the function finishes, its memory block is once again made available for other purposes.
+
