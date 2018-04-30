@@ -167,7 +167,7 @@ https://v8project.blogspot.kr/2017/05/launching-ignition-and-turbofan.html
     - V8은 1비트를 SMI인지 아닌지를 확인하기 위한 flag로 사용한다. 만약 SMI가 아닐경우 V8은 해당 넘버를 box화해서 해당 number를 double로 만들거나 new object를 만들어서 넣게 된다. 따라서 31 signed 넘버를 최대한 사용하는 것이 좋다
 
 
-### [How JavaScript works: memory management + how to handle 4 common memory leaks](How JavaScript works: memory management + how to handle 4 common memory leaks)
+### [How JavaScript works: memory management + how to handle 4 common memory leaks]()
 
 
 #### Overview
