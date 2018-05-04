@@ -17,4 +17,4 @@ Default region name [None]: ap-northeast-2
 Default output format [None]: 
 ```
 4. `$ aws s3 ls` 버킷이름 받아오기
-5. `$ aws s3 sync localPath s3://bucketName` 
+5. `$ aws s3 s3://bucketName .`으로 모든 파일을 다운받을 수 있다.
