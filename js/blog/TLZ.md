@@ -24,7 +24,9 @@ let x = 'outer scope';
 }());
 ```
 
-위와 같은 코드는 조금 더 생각해볼 여지가 있습니다. 단순히 생각해보면 'outer scope'를 실행한다고 생각할 수 있지만, 코드를 실행해보면 reference error를 발생시킵니다. 뭔가 이상하다고 생각이 들기 시작하면 스펙을 살펴봅시다.
+위와 같은 코드는 조금 더 생각해볼 여지가 있습니다. 단순히 생각해보면 'outer scope'를 실행한다고 생각할 수 있지만, 코드를 실행해보면 reference error를 발생시킵니다. 
+
+다음은 ECMA 스펙에 서술되어 있는 내용입니다.
 
 > **13.2.1** Let and Const Declarations
 NOTE let and const declarations define variables that are scoped to the running execution context’s LexicalEnvironment. **The variables are created when their containing Lexical Environment is instantiated but may not be accessed in any way until the variable’s LexicalBinding is evaluated.** A variable defined by a LexicalBinding with an Initializer is assigned the value of its Initializer’s AssignmentExpression when the LexicalBinding is evaluated, not when the variable is created. If a LexicalBinding in a let declaration does not have an Initializer the variable is assigned the value undefined when the LexicalBinding is evaluated.
@@ -99,8 +101,8 @@ console.log(x); // > 1
 
 ## references
 
-https://mail.mozilla.org/pipermail/es-discuss/2012-September/024996.html
-http://2ality.com/2015/10/why-tdz.html
-https://gist.github.com/rwaldron/f0807a758aa03bcdd58a
-http://jsrocks.org/2015/01/temporal-dead-zone-tdz-demystified
-http://dmitrysoshnikov.com/ecmascript/es6-notes-default-values-of-parameters/#conditional-intermediate-scope-for-parameters
+1. https://mail.mozilla.org/pipermail/es-discuss/2012-September/024996.html
+2. http://2ality.com/2015/10/why-tdz.html
+3. https://gist.github.com/rwaldron/f0807a758aa03bcdd58a
+4. http://jsrocks.org/2015/01/temporal-dead-zone-tdz-demystified
+5. http://dmitrysoshnikov.com/ecmascript/es6-notes-default-values-of-parameters/#conditional-intermediate-scope-for-parameters
