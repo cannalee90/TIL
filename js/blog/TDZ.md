@@ -34,7 +34,7 @@ NOTE let and const declarations define variables that are scoped to the running 
 
 스펙에서는 TDZ라는 것이 명시되지 않았지만, 두껍게 표시된 문장이 TDZ를 설명한다고 볼 수 있습니다.
 
-```js
+```
 let a = f();
 const b = 2;
 function f() { return b; }
@@ -68,8 +68,7 @@ es6의 파라미터는 왼쪽부터 초기화되기 때문에, 위에 예제는 
 }(1, undefined));
 
 // 디폴트 파라미터는 왼쪽부터 수행되기 때문에, B가 TDZ에 있으므로 A를 초기화 할때 에러가 난다.
-(function(a = b, b) {
-}(undefined, 1)); // ReferenceError
+(function(a = b, b) {}(undefined, 1)); // ReferenceError
 
 // a가 a를 초기화 시킬때 a는 TDZ에 속하기 때문에, 에러가 난다. 
 
