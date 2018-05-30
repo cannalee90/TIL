@@ -240,3 +240,214 @@ console.log(person.obj.sayNName.name) // "sayNName"
 3. setter 함수의 이름은 일반적인 메서드와 차이를 나타내는 "set firstName"이다.
 4. 익명 함수의 이름은 "anonymous"이다.
 5. 중첩된 오브젝트안에 있는 함수 이름도 같다.
+
+## 3.6 함수의 두 가지 용도를 명확히 하기
+
+ES5까지의 함수는 new 없이 호출괴거나 new와 함께 호출되는 두가지 용도로 사용되고 있었다. 이는 혼란을 일으킬 수 있기 때문에, ES6에서는 몇 가지 개선이 이루어졌다.
+
+- 함수를 new 없이 호출할 때는 함수를 실행하는 `[[Call]]` 메서드가 실행
+- 함수를 new로 호출할 때 `[[Constructor]]` 메서드를 실행(생성자
+
+### 3.6.1 ES5에서 함수 호출을 결정하는 요인
+
+ES5에서 함수를 new와 호출했는지 판단하는 가장 일반적인 방법은 instanceof를 사용하는 것이다. 하지만 `call`이나 `apply`를 사용할 경우에는 정상적으로 작동하지 않는다.
+
+```js
+function Person(name) {
+  if(this instanceof Person) {
+    this.name = name;
+  } else {
+    throw new Error("You must use new with Person");
+  }
+
+  var person = new Person("Nicholas");
+  var notAPerson = Person.call(person, "Michael");
+}
+```
+
+이 예제에서는 person객체가 this에 바인딩되기 때문에 생성자로써 호출되었는지 정확히 판단할 수 없다.
+
+### 3.6.2 new.target 메타 프로퍼티
+
+ES6에서는 문제를 해결하기 위해 new.target 메타 프로퍼티가 도입되었다. 메타 프로퍼티 `new.target`에는 `[[Constructor]]`가 실행될 경우 new 연산자의 실행 대상이 할당된다. `[[Call]]`이 실행되면 `new.target`은 `undefined`이다.
+
+```js
+function Person(name) {
+  if(typeof new.target !== "undefined") {
+    this.name = name;
+  } else {
+    throw new Error("You muse use with Person.!");
+  }
+}
+
+var person = new Person("Nicholas");
+var notAPerson = Person.call(person, "Michael"); //Uncaught Error: You muse use with Person.!
+```
+
+```js
+function Person(name) {
+  if(new.target === Person) { //new.target undefined
+    this.name = name;
+  } else {
+    throw new Error("You muse use with Person.!");    
+  }
+}
+
+function AnotherPerson(name) {
+  Person.call(this, name);
+}
+
+var Person = new Person("Nicholas");
+var anotherPerson = new AnotherPerson("Nicholas"); //에러 발생
+```
+`new.target`을 추가하여서 함수 호출과 관련된 모호한 부분을 명확히 한다.
+
+## 3.7 블록 레벨 함수
+
+ES5 strict 모드는 블록 내부에서 함수 선언을 할 때마다 에러를 발생시킨다. ES6에서는 블록 내부에서 함수 선언이 가능하고 최상단으로 호이스팅된다.
+
+```js
+'use strict'
+if(true) {
+  console.log(typeof doSomething); // "function"
+
+  function doSomething() {
+
+  }
+
+  doSomething();
+}
+
+console.log(doSomething) // "undefined"
+```
+
+### 3.7.1 블록 레벨 함수의 사용 시기
+
+블록 레벨 함수는 let 함수 표현식과 유사하지만, 정의된 블록의 최상단으로 호이스팅 된다는 것이다. let 함수 표현식의 경우는 TDZ가 적용된다.
+
+### 3.7.2 Non-strict 모드의 블록 레벨 함수
+
+ES6에서의 non-strict 모드에서도 블록 레벨 함수를 허용하지만 동작이 약간 다르다.
+
+```js
+if(true) {
+  console.log(typeof doSomething); // "function"
+  function doSomething() {
+
+  }
+  let doSomethingElse = function() {
+
+  }
+  doSomething();
+}
+
+console.log(typeof doSomething); // "function"
+console.log(typeof doSomethingElse) // undefined
+```
+
+non-strict 모드에서는 전역 스코프로 호이스팅 되어 if 블록의 바깥 부분에도 존재한다. 하지만 let 함수 표현식은 호이스팅 되지 않는다.
+
+### 3.8 화살표 함수
+
+화살표 함수는 화살표를 사용하는 새로운 문법으로 정의한다.
+
+- `this`, `super`, `arugment`, `new.target`의 값은 그 화살표 함수를 가장 근접하게 둘러 싸고 있는 일반함수에 의해 정의된다.
+- `[[Constrcut]]` 메서드가 없으므로 생성자 함수로 사용할 수 없다.
+- 프로토타입이 없다.
+- 함수 내부에서 `this`를 변경할 수 없다.
+- `arguments`가 바인딩 되지 않기 때문에, 명시한 매개변수와 나머지 매개변수에 의존해야 한다.
+- 매개변수를 중복하여 사용할 수 없다.
+- `name` 프로퍼티를 가진다.
+
+3.8.1 화살표 함수 문법
+
+```js
+var reflect = value => value;
+
+// 사실상 같은 코드
+
+var reflect = function(value) {
+  return value;
+}
+```
+
+```js
+let sum = (num1, num2) => num1 + num2;
+
+// 사실상 같은 코드
+
+let sum = function(num1, num2) {
+  return num1 + num2;
+}
+```
+
+```js
+let getName = () => "Nicholas";
+
+// 사실상 같은 코드
+
+let getName = function() {
+  return "Nicholas";
+}
+```
+
+```js
+let sum = (num1, num2) => {
+  return num1 + num2;
+}
+
+// 사실상 같은 코드
+
+let sum = function(num1, num2) {
+  return num1 + num2;
+}
+```
+
+```js
+let doNothing = () => {};
+
+// 사실상 같은 코드
+
+let doNothing = function() {};
+```
+
+바깥에 객체 리터럴을 반환하는 화살표 함수는 괄호로 객체 리터럴을 감싸야만 한다.
+
+```js
+let getTempItem = id => ({id: id, name: "Temp"});
+
+// 사실상 같은 코드
+
+let getTempItem = function(id) {
+  return {
+    id: id, 
+    name: "Temp",
+  }
+}
+```
+
+### 3.8.2 즉시 실행 함수 표현식 만들기
+
+```js
+let person = function(name) {
+  return {
+    getName: function() {
+      return name;
+    }
+  }
+}("Nicholas");
+
+console.log(person.getName());
+
+// 사실상 같은 코드
+
+let person = ((name) => {
+  return {
+    getName: function() {
+      return name;
+    }
+  }
+})("Nicholas");
+
+console.log(person.getName());
+```
