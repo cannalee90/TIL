@@ -451,3 +451,79 @@ let person = ((name) => {
 
 console.log(person.getName());
 ```
+
+### 3.8.3 No this 바인딩
+
+`bind()` 메서드를 사용해서 스코프에 명시적으로 this를 바인딩할 수 있습니다. 하지만 ES6에서는 화살표 함수를 사용해서 코드를 효과적으로 작성할 수 있습니다. 화살표 함수는 this 바인딩을 하지 않으므로, 화살표 함수 내 this 값은 스코프 체인을 통해서만 결정된다. 만약 화살표 함수가 일반 함수 안에 포함되는 형태이면 this 값은 화살표 함수를 감싸는 함수에서의 값과 같을 것이고, 그렇지 않으면 this는 전역의 this와 같다.
+
+### 3.8.4 화살표 함수와 배열
+
+```js
+var result = values.sort(function(a, b) {
+  return a - b;
+});
+
+// 사실상 같은 코드
+
+var result = values.sort((a, b) => a - b);
+```
+
+### 3.8.5 No arguments 바인딩
+
+화살표 함수는 `aruments` 객체를 가지고 있지 않지만, 둘러싼 함수의 `arguments` 객체에 접근할 수 있다. 그 `arguments` 객체는 나중에 화살표 함수가 실행되는 곳 어디든 이용할 수 있다.
+
+```js
+function createArrowFunctionReturningFirstArg() {
+  return () => arguments[0];
+}
+
+var arrowFunction = createArrowFunctionReturningFirstArg(5);
+
+console.log(arrowFunction()); // 5
+```
+
+### 3.8.6 화살표 함수 식별하기
+
+화살표 함수 역시 함수이며 함수로 식별된다.
+
+```js
+var comparator = (a, b) => a - b;
+
+console.log(typeof comparator); // "function"
+console.log(comparator instanceof Function) // true
+```
+
+화살표 함수에도 여전히 `call()`과 `apply()`, `bind()`를 사용할 수 있다.
+
+## 3.9 꼬리 호출 최적화
+
+**꼬리 호출(tail call)** 함수가 다른 함수의 마지막에 호출될 때를 말한다. ES5 엔진에 구현된 꼬리 호출은 일반적인 함수 호출처럼 처리된다. 즉, 함수 호출을 나타내기 위하여 호출 스택에 새로운 스택 프레임을 만들고 추가한다. 그것은 이전의 모든 스택 프레임이 메모리에 유지되고, 호출 스택이 너무 커지면 메모리에 문제가 발생할 수 있다는 의미이다.
+
+### 3.9.1 ES6 꼬리 호출의 차이점
+
+ES6에서는 `strict` 모드에서 특성 꼬리 호출을 위한 호출 스택의 크기를 줄인다. 이러한 최적화로, 다음의 조건을 만족하면 꼬리 호출을 위한 새로운 스택 프레임을 만드는 대신 현재 스택 프레임을 지우고 재사용한다. 현재 V8 엔진에서는 구현되어 있지 않다.
+
+https://stackoverflow.com/questions/42788139/es6-tail-recursion-optimisation-stack-overflow/42788286
+
+https://www.chromestatus.com/feature/5516876633341952
+
+- 꼬리 호출이 현재 스택 프레임의 변수에 접근하지 않는다.(No closure)
+- 꼬리 호출을 만드는 함수가 꼬리 호출 반환 후에 남은 작업이 없음
+- 꼬리 호출의 결과가 함수의 값으로 반환됨
+```
+"use strict"
+function doSomething() {
+  return doSomethingElse(); // O
+
+"use strict"
+function doSomething() {
+  doSomethingElse();
+  return; // X
+}
+
+"use strict"
+function doSomething() {
+  let a = 1;
+  return doSomethingElse() + a;
+}
+```
