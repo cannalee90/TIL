@@ -54,3 +54,81 @@ var person = {
   }
 }
 ```
+
+`sayName()`에는 익명 함수 표현식이 할당되고 ES5에서의 `sayName()` 함수와 같은 특성을 가진다. 한가지 다른점은 간결한 메서드는 `super`를 사용할 수 있지만, 
+
+### 4.2.3 계산된 프로퍼티 이름
+
+ES6에서는 대괄표 표기법을 사용하면서 계산된 프로퍼티 이름을 사용할 수 있다.
+
+```js
+let lastName = "last Name";
+let person = {
+  "first name": "Nicholas",
+  [lastName]: "Zakas",
+  ["first" + "last"]: "N Z",
+};
+```
+
+### 4.3 새로운 객체 관련 메서드
+
+### 4.3.1 Object.is() 메서드
+
+자바스크립트 엔진은 +0과 -0 값을 다르게 표현하지만 ===는 같은 것으로 간주한다. 또한, NaN === NaN 반환값은 false이며 NaN를 제대로 찾기 위해서는  isNaN을 사용해야 했다. 이러한 일치 연산자를 보완하기 위해서 `Object.is()` 메서드를 만들었다.
+
+```js
+console.log(+0 === 0) // true
+console.log(+0 === -0) // true
+console.log(Object.is(+0, -0)) // false
+
+console.log(NaN == NaN) // false
+console.log(NaN === NaN) // false
+console.log(Object.is(NaN, NaN)) // true
+
+console.log(5 == 5) // true
+console.log(5 == "5") // true
+console.log(5 === 5) // true
+console.log(5 === "5") // fasle
+console.log(Object.is(5, 5)) //true
+console.log(Object.is(5, "5")) // false
+```
+
+### 4.3.2 Object.assign() 메서드
+
+ES5에서 쓰였던 믹스인 메서드는 다음과 같다
+
+```js
+//ES5
+function mixin(receiver, supplier) {
+  Object.keys(supplier).forEach(function(key) {
+    receiver[key] = supplier[key];
+  });
+
+  return receiver;
+}
+
+//ES6
+Object.assign(receiver, supplier, supplier1, supplier2)
+```
+
+다양한 라이브러리에서 위와 같은 mixin 패턴을 사용하엿다. 하지만 다른 메서드 이름을 사용했는데, 대체적으로 `extends()`,`mix()`와 같은 이름을 사용하였다. 
+
+공급자가 접근자 프로퍼티를 가질때 `Object.assign()` 메서드는 수신자에 접근자 프로퍼티를 생성하지 않는다. `Object.assing()` 메서드는 할당 연산자를 사용하기 때문에 공급자의 접근자 프로퍼티는 수신자의 데이터 프로퍼티가 된다.
+
+```js
+var recevier = {};
+var supplier = {
+  get name() {
+    return "file.js";
+  }
+};
+
+Object.assign(receiver, supplier);
+
+var descriptor = Object.getOwnPropertyDescriptor(receiver, "name");
+
+console.log(descriptor.value) // "file.js"
+console.log(descriptor.get) // undefined
+console.log(receiver.name) // "file.js"
+```
+
