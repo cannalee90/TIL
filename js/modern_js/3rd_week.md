@@ -55,7 +55,25 @@ var person = {
 }
 ```
 
-`sayName()`에는 익명 함수 표현식이 할당되고 ES5에서의 `sayName()` 함수와 같은 특성을 가진다. 한가지 다른점은 간결한 메서드는 `super`를 사용할 수 있지만, 
+`sayName()`에는 익명 함수 표현식이 할당되고 ES5에서의 `sayName()` 함수와 같은 특성을 가진다. 한가지 다른점은 간결한 메서드는 `super`를 사용할 수 있다.
+
+```js
+let obj1 = {
+    name: "kangho",
+    sayName(){
+        console.log(this); // {name: kangho}
+    }
+}
+
+let obj2 = {
+    name: "kangho",
+    sayName: () => {
+        console.log(this); // undefined
+    }
+}
+```
+
+아래의 경우 `obj2.sayName()`의 함수에서 this는 undefined이다
 
 ### 4.2.3 계산된 프로퍼티 이름
 
@@ -275,7 +293,7 @@ let relative = Object.create(friend);
 
 console.log(person.getGreeting()); // "hello"
 console.log(friend.getGreeting()); // "hello, hi!"
-console.log(relative.getGreeting()); // 에러!
+console.log(relative.getGreeting()); 
 ```
 
 super 참조는 동적이지 않기 때문에, 항상 올바른 객체를 참조한다. 이 경우, person.getGreeting()을 참조한다.
