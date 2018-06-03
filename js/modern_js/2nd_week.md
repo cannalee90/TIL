@@ -246,7 +246,7 @@ console.log(person.obj.sayNName.name) // "sayNName"
 ES5까지의 함수는 new 없이 호출괴거나 new와 함께 호출되는 두가지 용도로 사용되고 있었다. 이는 혼란을 일으킬 수 있기 때문에, ES6에서는 몇 가지 개선이 이루어졌다.
 
 - 함수를 new 없이 호출할 때는 함수를 실행하는 `[[Call]]` 메서드가 실행
-- 함수를 new로 호출할 때 `[[Constructor]]` 메서드를 실행(생성자
+- 함수를 new로 호출할 때 `[[Constructor]]` 메서드를 실행(생성자)
 
 ### 3.6.1 ES5에서 함수 호출을 결정하는 요인
 
@@ -327,7 +327,7 @@ console.log(doSomething) // "undefined"
 
 ### 3.7.2 Non-strict 모드의 블록 레벨 함수
 
-ES6에서의 non-strict 모드에서도 블록 레벨 함수를 허용하지만 동작이 약간 다르다.
+ES6에서의 non-strict 모드에서도 블록 레벨 함수를 허용하지만 동작이 약간 다르다. 블록 레벨 함수 선언을 블록의 상단으로 호이스팅하는 대신, 둘러싼 함수나 전역 환경의 최상단까지 호이스팅한다.
 
 ```js
 if(true) {
