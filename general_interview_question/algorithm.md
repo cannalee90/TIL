@@ -270,3 +270,36 @@ for(var i = 0; i < expr.length; i++) {
 }
 ```
 
+### Quick Sort
+
+```js
+function quickSort(arr) {
+  if(arr.length <= 1) {
+    return arr;
+  }
+  var pivot = arr[parseInt(arr.length / 2)];
+  var less = arr.filter((cur) => cur < pivot);
+  var greater = arr.filter((cur) => cur > pivot);
+  var pivot = arr.filter((cur) => cur == pivot);
+  return mergeArrays(...quickSort(less), ...pivot, ...quickSort(greater));
+}
+```
+
+퀵소트 역시 분할정복을 기본 전략으로 구현된 정렬 알고리즘이다. 일단 주어진 배열에서 Pivot을 선택한다. 그리고 배열을 Pivot을 기준으로 Pivot보다 작은 키를 가진 배열, Pivot과 같은 키를 가진 배열, Pivot보다 큰 키를 가진 배열로 분할한다. 그리고 이 작업을 재귀적으로 배열의 크기가 1이 될때까지 반복한다. 그리고 이렇게 나누어진 배열을 병합하다 보면 최종적으로 모든 배열이 정렬된다.
+
+시간복잡도는 어떤 수를 pivot으로 선택하냐에 따라 달라지지만 평균적으로 O(nlogn)이다. 최악의 경우(pivot의 크기가 항상 제일 큰 수거나 작은 수일 경우) 시간복잡도는 O(n^2)이다.
+
+### 해시 방법에 대해 아는 대로 설명해보고 충돌이 날 경우 어떻게 해결할 수 있을지 설명해 봐라
+
+hash table - key와 value로 이루어진 자료구조이다. hash function을 사용해서 key를 구하게 된다.
+hash function - hash table의 key를 구하는 함수이다. 다양한 방법이 쓰이고 있으며, 좋은 hash function은 아래의 조건을 만족한다.
+
+- 같은 인풋에 대해서 동일한 key를 반환해야 한다.
+- key의 배분이 균일해야 한다.
+- hash function의 속도가 너무 느리면 안된다.
+
+- 가장 흔하게 사용되는 해시펑션은 모듈러를 이용하는 방식이다. 이 경우의 키는 소수의 모듈러 연산을 통해 구한다.
+
+- 해시는 충돌을 피할 수 없다. 그럼 충돌이 났을 경우는 어떻게 할까?
+  - 체이닝: 입력되어서 들어오는 값들을 리스트로 이어서 관리하게 된다. 이 경우 서치는 그 리스트를 선형으로 탐색해야 하는 상황이 된다. 
+  - 개방주소법: 링크드리스트와 같이 또다른 메모리를 사용하지 않고, 테이블에서 새로운 주소를 찾는 방식이다.
