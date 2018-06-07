@@ -55,3 +55,19 @@ https://d2.naver.com/helloworld/47667
 8. TIME_WAIT:  FIN을 수신한 TCP는 연결이 안정적으로 종료 되고 네트워크 상에 잔존하는 중복 세그먼트가 만료 될 수 있도록  TIME_WAIT상태에서 정해진 시간 동안 대기 한다. 정해진 시간이 지나면 연결이 종료되며 관련 커널 자원도 해제 한다.
 9. CLOSE_WAIT: 상대편 TCP로부터 FIN을 수신 했다.
 10. 기존에 CLOSE_WAIT 상태에 있던 TCP는 상대편 TCP로 FIN을 전송 한 뒤 ACK를 기다린다. ACK를 수신하면 연결이 종료되며 커널 자원이 해제 된다. 
+
+### network
+- 200 : 정상
+- 3xx의 경우 리다이렉트의 의미가 있다.
+  * 302, 301 : redirect, 
+  * 304 : 요청한 리소스가 마지막 요청 이후 변경된 적이 없기 때문에 기존 클라이언트의 로컬 캐시 리소스를 사용하도록 알려줌.
+- 4xx의 경우 클라이언트의 에러이다.
+  * 401 : HTTP 인증(BASIC 인증, DIGEST 인증) 정보가 필요함을 알려줌. 처음엔 다이얼로그, 다음엔 실패
+  * 404 : Not Found, 이 에러는 클라이언트가 요청한 문서를 찾지 못한 경우에 발생함. URL을 다시 잘 보고 주소가 올바로 입력되었는지를 확인함. 
+  * 403 : forbidden
+  * 400 : 요청 자체가 잘못되었음을 의미한다.
+
+- 5xx의 경우 서버의 에러이다.
+  * 500 : Internal server error 서버의 에러
+  * 502 : bad gateway
+  * 503 : Service Temporarily Unavailable
