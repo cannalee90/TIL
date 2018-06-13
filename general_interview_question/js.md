@@ -2,11 +2,13 @@
 
 Javascript에서는 크게 primitive type과 reference type이 있습니다.
 
-JS에서 primitive type은 `Number`, `String`, `Boolean`, `null`, `undefined`, `symbol`이 있습니다. 그리고 아래와 같은 특징을 가지게 됩니다.
+JS에서 primitive type은 `Number`, `String`, `Boolean`, `null`, `undefined`, ES6에서 추가된 `symbol`이 있습니다. 그리고 아래와 같은 특징을 가지게 됩니다.
 
 - 각각의 값은 모두 스택에 저장됩니다.
 - 변수 그 자체가 하나의 값을 나타냅니다.
 - 인자가 전달될때 call by value의 형태로 넘어갑니다.
+- primitive type의 값은 immutable합니다.
+- 위와 같은 코드에서 str은 객체가 아님에도 불구하고 암묵적으로 primitive 객체로 래핑되서 실행됩니다. 
 
 ```
 Number.prototype.whoAmI = function() { console.log(typeof this);}
@@ -19,8 +21,6 @@ num.whoAmI(); // "object"
 typeof num // "number"
 ```
 
-- 위와 같은 코드에서 str은 객체가 아님에도 불구하고 암묵적으로 primitive 객체로 래핑되서 실행됩니다. 
-- primitive type의 값은 immutable합니다.
 
 references
 
@@ -41,8 +41,7 @@ JS
 1. 인터프리트 스크립트 언어이다.(요즘엔 엔진에 따라서 컴파일 하기도 한다)
 2. 동적 타입 언어이다. 실행시킬때까지 변수가 어떤 타입인지 정해지지 않는다. 이를 극복하기 위해서 typescript나 flow같은 도구들이 있다.
 3. 일반적으로 브라우저위에서 실행된다.(요즘엔 RN이나 ionic 같은 경우도 있다)
-4. 프론트사이드 언어로 주로 사용한다.
-5. JS에서는 메인쓰레드가 하나이다. 따라서 event-loop라고 불리는 큐시스템을 이용해서 동시성 문제를 해결한다.
+4. JS에서는 메인쓰레드가 하나이다. 따라서 event-loop라는 모델을 사용해서 동시성 문제를 해결한다.
 
 references
 
@@ -61,7 +60,7 @@ console.log(10); // 10
 
 함수의 경우도 마찬가지로 함수 선언식으로 나타낸 함수들은 함수의 최상위 혹은 전역 컨텍스트의 최상위에로 끌어올려지게 됩니다. 함수 선언식으로 나타낸 함수들은 정상적으로 실행됩니다.
 
-```
+```js
 (function a() {
 	f();
 	function f() {
@@ -79,7 +78,8 @@ https://github.com/JaeYeopHan/Interview_Question_for_Beginner/tree/master/JavaSc
 ### Closure
 
 간단하게 말하면 이미 생명주기가 끝난 외부(부모) 함수의 변수를 참조하는 것을 클로저라고 말한다. 조금 더 풀어서 말하면, 생성될때 당시의 환경을 기억하는 함수를 말한다. 
-```
+
+```js
 var color = 'red';
 function foo() {
     var color = 'blue'; // 2
@@ -90,6 +90,19 @@ function foo() {
 }
 var baz = foo(); // 3
 baz(); // 4
+```
+
+```js
+var color = 'red';
+function foo() {
+    var color = 'blue';
+    function bar() {
+        console.log(color);
+    }
+    return bar;
+}   
+var baz = foo();
+baz();
 ```
 
 `bar`의 경우 자신이 생성된 렉시컬 스코프를 벗어나 global에서 호출이 되었다. 하지만 스코프 탐색은 현재 실행 스택과 관련없는 `foo()`를 거쳐갔다. 이와 같은 `bar, baz`와 같은 함수를 클로저라고 한다. 추가적으로 `foo()`의 렉시컬 인스턴스가, GC에 의해서 회수되어야 하지만, `bar()`에 의해서 참조되기 때문에 회수되지 않는다. 따라서 클로저를 남용하게 되면 메모리 이슈가 생기게 된다.
@@ -121,8 +134,7 @@ inside javascript
 
 ### CDN
 
-content delivery network라고 해서 분산화된 네트워크를 칭합니다. 보통 글로벌 서비스를 운영할때 edge서버에 서버의 static한 데이터들을 복사해놓습니다. 그리고 클라이언트에서 특정 리소스를 요청할 경우 만약 edge서버에서 그 데이가 있을때, 물리적으로 가장 가까운 edge 서버에서 요청을 처리하는 식으로 사용됩니다. 대표적으로 cloudflare나 cloudfront와 같은 서비스가 대표적입니다. 
-
+content delivery network라고 해서 분산화된 네트워크를 칭합니다. 보통 글로벌 서비스를 운영할때 edge서버에 서버의 static한 데이터들을 복사해놓습니다. 그리고 클라이언트에서 특정 리소스를 요청할 경우 만약 edge서버에서 그 데이터를 있을때, 물리적으로 가장 가까운 edge 서버에서 요청을 처리하는 식으로 사용됩니다. 대표적으로 cloudflare나 aws-cloudfront와 같은 서비스가 대표적입니다. 
 
 https://docs.microsoft.com/ko-kr/azure/cdn/cdn-overview
 
@@ -133,6 +145,7 @@ https://docs.microsoft.com/ko-kr/azure/cdn/cdn-overview
 4. medium과 같이 이미지를 한번에 로딩하는 것이 아니라 lazy-loading을 사용한다
 5. React의 경우 `sholudComponentUpdate`와 같은 라이프사이클 메서드를 잘 사용해서 ui에 불필요한 업데이트를 조정한다.
 6. 폰트의 경우에도 sub-set을 사용해서 초기 로딩속도를 줄인다.
+7. 넥플릭스의 경우처럼 plainJS를 적극적으로 이용한다.
 
 https://css-tricks.com/case-study-boosting-front-end-performance/
 https://hackernoon.com/optimising-the-front-end-for-the-browser-f2f51a29c572?gi=6aa37967a75a
@@ -155,7 +168,7 @@ Array.prototype.foreach.call(nodelist, (node) => {
 
 ### let, const, blockscope
 
-ES5까지는 블록스코프를 지원하지 않았지만, ES6에서 새롭게 나온 키워드인 let과 const의 경우에는 block scope를 지원합니다. let과 const는 블록레벨 스코프를 지원합니다. 또한 hoist가 되지 않기 때문에 
+ES5까지는 블록스코프를 지원하지 않았지만, ES6에서 새롭게 나온 키워드인 let과 const의 경우에는 block scope를 지원합니다. let과 const는 블록레벨 스코프를 지원합니다. 또한 hoist가 되지 않기 때문에 만약 선언된곳 보다 더 먼저 사용된 `let`과 `const`는 TDZ에 들어가있다고 표현합니다. TDZ에서 변수를 사용하면 `Reference Error`가 발생한다.
 
 ### 자바스크립트의 장단점
 
@@ -165,7 +178,7 @@ ES5까지는 블록스코프를 지원하지 않았지만, ES6에서 새롭게 �
 
 ### Arrow function
 
-- `this`, `super`, `arugment`, `new.target`의 값은 그 화살표 함수를 가장 근접하게 둘러 싸고 있는 일반함수에 의해 정의된다.
+- `this` `super` `arugment` `new.target`의 값은 그 화살표 함수를 가장 근접하게 둘러 싸고 있는 일반함수에 의해 정의된다.
 - `[[Constrcut]]` 메서드가 없으므로 생성자 함수로 사용할 수 없다.
 - 프로토타입이 없다.
 - 함수 내부에서 `this`를 변경할 수 없다.
@@ -186,8 +199,6 @@ http://ppss.kr/archives/26024
 HTML5에서 추가된 기능으로써 브라우저에서 사용할 수 있는 key-value 저장소입니다.
 localSroage는 데이터가 영구적으로 저장되지만 session storage는 탭을 닫거나 윈도우를 닫을경우(페이지 세션이 만료될 경우) 데이터가 초기화 됩니다.
 유저가 웹 사이트에 방문했을때 서버가 사용자에 컴퓨터에 기록하는 정보이다. 주로 클라이언트에 대한 정보를 저장, 4kb의 용량한계, 별도의 암호화 부재, HTTP요청때마다 전송됨, 만료일이 존재, 높은 호환성
-
-### HTTP HTTPS
 
 ### 실행 컨텍스트
 
@@ -235,7 +246,9 @@ excution context란 실행 가능한 코드가 실행되기 위해 필요한 환
 
 ### event loop
 
-스펙에 명시되어 있지는 않지만, 단일 쓰레드기반의 자바스크립트가 I/O나 http 요청 같은 비동기 작업에서 동시성을 지원하기 위한 장치. call stack이 비어있을때 Microtasks queue와 Tasks queue를 감시하면서 다음에 실행되어야할 코드를 call stack에 넣어주는 역활을 합니다. microtasks는 `Promise`와 `mutationObserver`이 있으며 항상 task보다 먼저 실행되게 됩니다. 또한 task와 task에는 브라우저 렌더링이 일어날수도 있습니다. task는 각종 비동기 함수, Web API영역에 있는 함수들을 말하고 작업이 순차적으로 수행되는 것을 보장합니다. `setTimeout`
+실제 자바스크립트가 구동되는 환경(브라우저, Node.js등)에서는 주로 여러 개의 스레드가 사용되며, 이러한 구동 환경이 단일 호출 스택을 사용하는 자바 스크립트 엔진과 상호 연동하기 위해 사용하는 장치가 바로 '이벤트 루프'인 것이다
+
+스펙에 명시되어 있지는 않지만, 단일 쓰레드기반의 자바스크립트가 I/O나 http 요청 같은 비동기 작업에서 동시성을 지원하기 위한 장치. call stack이 비어있을때 Microtasks queue와 Tasks queue를 감시하면서 다음에 실행되어야할 코드를 call stack에 넣어주는 역활을 합니다. microtasks는 `Promise`와 `mutationObserver`이 있으며 항상 task보다 먼저 실행되게 됩니다. task는 각종 비동기 함수, Web API영역에 있는 함수들을 말하고 작업이 순차적으로 수행되는 것을 보장합니다. `setTimeout`
 
 
 http://sculove.github.io/blog/2018/01/18/javascriptflow/
@@ -272,7 +285,19 @@ http://meetup.toast.com/posts/89
 자바스크립트 비동기 처리에 사용되는 객체로써 3가지의 상태를 가집니다.
 - `Pending` : (대기) 함수를 처음 실행하거나, 비동기 로직이 처리중이거나 `resolve()` 함수를 실행하지 않은 상태
 - `Fulfilled` : (함수) 콜백 함수 인자 `resolve()`를 실행한 상태
-- `Rejected` : 실패
+- `Rejected` : (실패) 콜백 함수 인자 `reject()`를 실행한 상태
 
+`then()`과 `catch()` 함수를 이용해서 chaining을 할 수 있다. 프로미스 구현은 다음 조건을 만족해야 한다.
 
+- A promise or "thenable" is an object that supplies a standard-compliant .then() method.
+    - 프로미스 혹은 `thenable` 객체는 표준호환을 `then()` 메서드를 제공합니다.
+- A pending promise may transition into a fulfilled or rejected state.
+    - pending은 fulfilled 혹은 rejected 상태로 변환될 수 있습니다.
+- A fulfilled or rejected promise is settled, and must not transition into any other state.
+    - fulfilled 혹은 rejected된 프로미스는 다른 상태로 변환할 수 없습니다.
+- Once a promise is settled, it must have a value (which may be undefined). That value must not change.
+    - promise가 settled되면 반드시 하나의 값을 반환해야 하고 이 값은 변하지 않습니다
 
+### 프로토타입 체이닝
+
+프로토타입 체이닝이란 자바스크립트에서 특정 객체의 프로퍼티나 메서드에 접근하려고 할 때, 해당 객체에 접근하려는 속성 또는 메서드가 없다면 [[Prototype]]링크를 따라 자신의 부모 역할을 하는 프로토타입 객체의 속성을 차례대로 검색하는 것을 프로토타입 체이닝이라고 한다. 프로토타입 체이닝의 끝은 Object.prototype이고 만약 여기서도 헤당 메서드나 속성을 찾을 경우 undefined를 리턴한다. 상속과 비슷한 역활을 하게 된다. 하지만 실재 존재하고 있는 객체에 대한 연결이기 때문에 상속 내용을 변경하거나 추가할 수 있다.
