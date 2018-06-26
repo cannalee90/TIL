@@ -1,4 +1,5 @@
 ### Primitive type
+### Primitive type
 
 Javascript에서는 크게 primitive type과 reference type이 있습니다.
 

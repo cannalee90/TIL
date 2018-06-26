@@ -175,3 +175,17 @@ head.appendChild(link);
 
 - 이 코드는 헤드에 추가해야 합니다
 - 스타일을 불러오는 과정이 비동기적으로 이루어지므로 자바스크리브 코드 실행 순서와는 무관하게 로드됩니다. 
+
+
+style 캐쉬해서 쓰는게 성능에 좋을까?
+	- style 객체를 매번 access하는것이 아니라?
+	- reflow와 repaint 조정
+	- 각각 reflow, repaint를 최적화 하려면 한번에 하던가 낮은버젼이면 상관없다.
+replaceChild() removeChild() 회수가 되는 시점
+	- 참조가 없어지는 시점에 해당 element가 사라진다.
+실제로는 캡쳐링을 안쓴다.
+this, target, currentTarget의 종류
+this와 currentTarget을 항상 일치하지는 않는다.
+크로스 브라우징,  preventDeault()로 
+
+22장 쓰로틀링 디바운싱

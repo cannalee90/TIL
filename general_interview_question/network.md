@@ -5,7 +5,7 @@
 - PUT: POST와 비슷하게, 리소스를 새로 만들거나 수정하는 request에 사용됩니다. POST request와 차이점은 PUT request는 idempotent이다.
 - DELETE: 리소스를 삭제할때 쓰이는 메서드이다. 
 - PATCH: PUT과 비슷하지만, 리소스의 일부를 수정할때 주로 사용하는 메서드입니다. 또한 PATCH request는 POST request와 같이 non-idempotent합니다.
-- HEAD: HEAD 메서드는 GET과 거의 비슷하지만, response-body를 받지 않습니다. 주로 GET request를 보내기 전에 어떤 GET request가 오는지 확인해보는 용도로 주로 쓰입니다.
+- HEAD: HEAD 메서드는 GET과 거의 비슷하지만, response-body를 받지 않습니다. 주로 GET request를 보내기 전에 어떤 GET response 오는지 확인해보는 용도로 주로 쓰입니다.
 - OPTIONS: OPTIONS request는 특정 url이 어떤 메서드와 오퍼레이션을 지원하는지에 대한 데이터를 받아야 합니다.
 
 idempotent: 같은 요청을 여러번 해도 같은 결과를 만들어 내는 것.
