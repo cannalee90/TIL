@@ -18,3 +18,5 @@ Default output format [None]:
 ```
 4. `$ aws s3 ls` 버킷이름 받아오기
 5. `$ aws s3 s3://bucketName .`으로 모든 파일을 다운받을 수 있다.
+6. `$ aws s3 s3://bucketName <localPath>`는 로컬로 다운하는 방법
+7. `$ aws s3 <localpath> s3://bucketName`는 s3로 업로드하는 방법
