@@ -7,3 +7,22 @@
 - websocket은 보는 방식이 좀 다른다. network -> ws -> frame에서 어떤식으로 서버로 들어오는지 확인
 - progress bar는 대충 이와 같이 진행하면 된다
 https://jsfiddle.net/cannalee90/pcwudrmc/38308/
+
+
+#### 화요일
+
+- 새로운 아이템을 받으면 조금 다른 방식으로 동작한다.
+- `switch`에서 여러개의 case를 한번에 다룰 수 있다. https://stackoverflow.com/questions/13207927/switch-statement-multiple-cases-in-javascript
+- table 형태를 직접 구현할 경우 양끝에 border 때문에 귀찮아지는 경우가 있다. 이럴대 깔끔하게 코딩하는 방법은 다음과 같다.
+```scss
+.list {
+  border: 1px solid #fff;
+  .item {
+    &:not(:last-child) {
+      border-bottom: 1px solid #fff;
+    }
+  }
+}
+
+```
+https://jsfiddle.net/cannalee90/pcwudrmc/38789/
