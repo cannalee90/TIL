@@ -36,3 +36,11 @@ https://jsfiddle.net/cannalee90/pcwudrmc/38789/
 > Reselect provides a function createSelector for creating memoized selectors. createSelector takes an array of input-selectors and a transform function as its arguments. If the Redux state tree is mutated in a way that causes the value of an input-selector to change, the selector will call its transform function with the values of the input-selectors as arguments and return the result. If the values of the input-selectors are the same as the previous call to the selector, it will return the previously computed value instead of calling the transform function.
 
 `createSelector`를 사용해서 memoized selector를 만드는데 이 함수는 input-selector의 배열을 인자로 받는다. 만약 리덕스의 상태 트리가 input-selector의 값들을 바뀌는 대로 변환한다면, selector는 transform 함수를 input-selector의 인자로 사용하면서 결과를 받는다. 만약 input-selectors의 값이 이 전과 같다면 이전에 계산했던 값을 다시 반환한다. 결국 중간에 캐쉬된 값을 가지고 있고, 그값을 반환하므로써 `mapStateToProps`이 일제히 호출하는 것을 막아준다.
+
+## 4th Week
+
+### 
+
+- element의 `positon` 속성을 `absolute`로 바꾼뒤, `top`과 같은 속성을 설정해주지 않으면 제대로 렌더링 되지 않는다
+- typescript에서 클래스 속성의 기본값을 설정해주지 않으면 `Object.hasOwnProperty.call(this, key)`의 조건이 생각했던 것처럼 작동되지 않는다.
+- class에 없는 property를 강제로 추가해도 그 인스턴스의 해당 속성이 제대로 먹히지 않는다.
